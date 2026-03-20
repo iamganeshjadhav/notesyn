@@ -112,15 +112,31 @@ const Notes = () => {
   };
 
   return (
-    <div style={{ maxWidth: "600px", margin: "20px auto", padding: "10px", border: "1px solid #ccc", borderRadius: "8px" }}>
+    <div style={{
+      maxWidth: "700px",
+      margin: "40px auto",
+      padding: "20px",
+      border: "1px solid #ddd",
+      borderRadius: "12px",
+      boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+      backgroundColor: "#fafafa"
+    }}>
       
-      <h2>Notes</h2>
+      <h2 style={{ textAlign: "center" }}>📝 Notes</h2>
 
-      {/* ✅ Logout Button */}
+      {/* Logout Button */}
       <button onClick={() => {
         localStorage.removeItem("token");
         window.location.reload();
-      }} style={{ marginBottom: "10px" }}>
+      }} style={{
+        marginBottom: "15px",
+        padding: "8px 12px",
+        backgroundColor: "#dc3545",
+        color: "white",
+        border: "none",
+        borderRadius: "5px",
+        cursor: "pointer"
+      }}>
         Logout
       </button>
 
@@ -130,28 +146,74 @@ const Notes = () => {
         placeholder="Title" 
         value={title} 
         onChange={e => setTitle(e.target.value)} 
-        style={{ width: "100%", padding: "8px", marginBottom: "8px" }} 
+        style={{ width: "100%", padding: "10px", marginBottom: "10px", borderRadius: "5px", border: "1px solid #ccc" }} 
       />
 
       <textarea 
         placeholder="Content" 
         value={content} 
         onChange={e => setContent(e.target.value)} 
-        style={{ width: "100%", padding: "8px", marginBottom: "8px" }} 
+        style={{ width: "100%", padding: "10px", marginBottom: "10px", borderRadius: "5px", border: "1px solid #ccc" }} 
       />
 
       {editId ? 
-        <button onClick={updateNote} style={{ marginRight: "8px" }}>Update Note</button> : 
-        <button onClick={createNote} style={{ marginRight: "8px" }}>Add Note</button>
+        <button onClick={updateNote} style={{
+          padding: "10px 15px",
+          backgroundColor: "#ffc107",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
+          marginRight: "10px"
+        }}>
+          Update Note
+        </button> : 
+        <button onClick={createNote} style={{
+          padding: "10px 15px",
+          backgroundColor: "#28a745",
+          color: "white",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
+          marginRight: "10px"
+        }}>
+          Add Note
+        </button>
       }
 
-      <ul style={{ listStyle: "none", padding: 0 }}>
+      <ul style={{ listStyle: "none", padding: 0, marginTop: "20px" }}>
         {notes.map(note => (
-          <li key={note.id} style={{ border: "1px solid #ddd", padding: "10px", marginBottom: "8px", borderRadius: "4px" }}>
+          <li key={note.id} style={{
+            border: "1px solid #ddd",
+            padding: "15px",
+            marginBottom: "10px",
+            borderRadius: "8px",
+            backgroundColor: "white"
+          }}>
             <h3>{note.title}</h3>
             <p>{note.content}</p>
-            <button onClick={() => editNote(note)} style={{ marginRight: "8px" }}>Edit</button>
-            <button onClick={() => deleteNote(note.id)}>Delete</button>
+
+            <button onClick={() => editNote(note)} style={{
+              marginRight: "10px",
+              padding: "6px 10px",
+              backgroundColor: "#007bff",
+              color: "white",
+              border: "none",
+              borderRadius: "5px",
+              cursor: "pointer"
+            }}>
+              Edit
+            </button>
+
+            <button onClick={() => deleteNote(note.id)} style={{
+              padding: "6px 10px",
+              backgroundColor: "#dc3545",
+              color: "white",
+              border: "none",
+              borderRadius: "5px",
+              cursor: "pointer"
+            }}>
+              Delete
+            </button>
           </li>
         ))}
       </ul>

@@ -19,12 +19,34 @@ function App() {
   }, []);
 
   return (
-    <div style={{ maxWidth: "800px", margin: "20px auto", padding: "10px" }}>
-      <h1>Backend Time from MySQL:</h1>
-      <p>{time}</p>
+    <div style={{
+      maxWidth: "900px",
+      margin: "40px auto",
+      padding: "20px",
+      fontFamily: "Arial, sans-serif"
+    }}>
 
-      <hr />
+      {/* Header */}
+      <div style={{
+        textAlign: "center",
+        marginBottom: "20px"
+      }}>
+        <h1 style={{ marginBottom: "5px" }}>🚀 NoteSync</h1>
+        <p style={{ color: "gray" }}>Real-time Notes Collaboration App</p>
+      </div>
 
+      {/* Backend Time Card */}
+      <div style={{
+        textAlign: "center",
+        padding: "10px",
+        marginBottom: "20px",
+        backgroundColor: "#f1f1f1",
+        borderRadius: "8px"
+      }}>
+        <strong>Backend Time:</strong> {time}
+      </div>
+
+      {/* Main Content */}
       {isLoggedIn ? <Notes /> : <Auth />}
 
     </div>
