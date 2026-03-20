@@ -146,14 +146,14 @@ const Notes = () => {
         placeholder="Title" 
         value={title} 
         onChange={e => setTitle(e.target.value)} 
-        style={{ width: "100%", padding: "10px", marginBottom: "10px", borderRadius: "5px", border: "1px solid #ccc" }} 
+        style={{ width: "90%", padding: "10px", marginBottom: "10px", borderRadius: "5px", border: "1px solid #ccc" }} 
       />
 
       <textarea 
         placeholder="Content" 
         value={content} 
         onChange={e => setContent(e.target.value)} 
-        style={{ width: "100%", padding: "10px", marginBottom: "10px", borderRadius: "5px", border: "1px solid #ccc" }} 
+        style={{ width: "90%", padding: "10px", marginBottom: "10px", borderRadius: "5px", border: "1px solid #ccc" }} 
       />
 
       {editId ? 

@@ -73,7 +73,7 @@ const Auth = () => {
           placeholder="Name"
           value={form.name}
           onChange={e => setForm({ ...form, name: e.target.value })}
-          style={{ width: "100%", padding: "10px", marginBottom: "10px" }}
+          style={{ width: "90%", padding: "10px", marginBottom: "10px" }}
         />
       )}
 
@@ -81,7 +81,7 @@ const Auth = () => {
         placeholder="Email"
         value={form.email}
         onChange={e => setForm({ ...form, email: e.target.value })}
-        style={{ width: "100%", padding: "10px", marginBottom: "10px" }}
+        style={{ width: "90%", padding: "10px", marginBottom: "10px" }}
       />
 
       <input
@@ -89,7 +89,7 @@ const Auth = () => {
         type="password"
         value={form.password}
         onChange={e => setForm({ ...form, password: e.target.value })}
-        style={{ width: "100%", padding: "10px", marginBottom: "10px" }}
+        style={{ width: "90%", padding: "10px", marginBottom: "10px" }}
       />
 
       <button onClick={handleSubmit} style={{
