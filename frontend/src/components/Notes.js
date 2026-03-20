@@ -15,7 +15,11 @@ const Notes = () => {
 
   const fetchNotes = () => {
     setMessage("Loading notes...");
-    axios.get(`${API_URL}/notes`)
+    axios.get(`${API_URL}/notes`, {
+      headers: {
+        Authorization: localStorage.getItem("token")
+      }
+    })
       .then(res => { setNotes(res.data); setMessage(""); })
       .catch(() => setMessage("Error fetching notes"));
   };
@@ -44,7 +48,14 @@ const Notes = () => {
 
   const createNote = () => {
     if (!title.trim()) { setMessage("Title required!"); return; }
-    axios.post(`${API_URL}/notes`, { title, content, owner_id: 1 })
+    axios.post(`${API_URL}/notes`, 
+      { title, content, owner_id: 1 },
+      {
+        headers: {
+          Authorization: localStorage.getItem("token")
+        }
+      }
+    )
       .then((res) => { 
         setTitle(""); 
         setContent(""); 
@@ -58,7 +69,14 @@ const Notes = () => {
 
   const updateNote = () => {
     if (!title.trim()) { setMessage("Title required!"); return; }
-    axios.put(`${API_URL}/notes/${editId}`, { title, content })
+    axios.put(`${API_URL}/notes/${editId}`, 
+      { title, content },
+      {
+        headers: {
+          Authorization: localStorage.getItem("token")
+        }
+      }
+    )
       .then(() => { 
         setTitle(""); 
         setContent(""); 
@@ -72,7 +90,11 @@ const Notes = () => {
   };
 
   const deleteNote = (id) => {
-    axios.delete(`${API_URL}/notes/${id}`)
+    axios.delete(`${API_URL}/notes/${id}`, {
+      headers: {
+        Authorization: localStorage.getItem("token")
+      }
+    })
       .then(() => { 
         setMessage("Note deleted ✅"); 
         fetchNotes(); 
@@ -94,7 +116,7 @@ const Notes = () => {
       
       <h2>Notes</h2>
 
-      {/* ✅ Logout Button ADDED */}
+      {/* ✅ Logout Button */}
       <button onClick={() => {
         localStorage.removeItem("token");
         window.location.reload();

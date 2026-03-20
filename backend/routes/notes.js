@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const mysql = require("mysql2");
+const verifyToken = require("../middleware/authMiddleware");
 require("dotenv").config();
 
 const db = mysql.createConnection({
@@ -18,8 +19,8 @@ router.get("/", (req, res) => {
   });
 });
 
-// Get note by ID
-router.get("/:id", (req, res) => {
+// Get note by ID 
+router.get("/", verifyToken, (req, res) => {
   const noteId = req.params.id;
   db.query("SELECT * FROM notes WHERE id = ?", [noteId], (err, result) => {
     if(err) res.status(500).json(err);
@@ -28,7 +29,7 @@ router.get("/:id", (req, res) => {
 });
 
 // Create note
-router.post("/", (req, res) => {
+router.post("/", verifyToken, (req, res) => {
   const { title, content, owner_id } = req.body;
   db.query("INSERT INTO notes (title, content, owner_id) VALUES (?, ?, ?)", [title, content, owner_id], (err, result) => {
     if(err) res.status(500).json(err);
@@ -37,7 +38,7 @@ router.post("/", (req, res) => {
 });
 
 // Update note
-router.put("/:id", (req, res) => {
+router.put("/:id", verifyToken, (req, res) => {
   const noteId = req.params.id;
   const { title, content } = req.body;
   db.query("UPDATE notes SET title = ?, content = ? WHERE id = ?", [title, content, noteId], (err, result) => {
@@ -47,7 +48,7 @@ router.put("/:id", (req, res) => {
 });
 
 // Delete note
-router.delete("/:id", (req, res) => {
+router.delete("/:id", verifyToken, (req, res) => {
   const noteId = req.params.id;
   db.query("DELETE FROM notes WHERE id = ?", [noteId], (err, result) => {
     if(err) res.status(500).json(err);
