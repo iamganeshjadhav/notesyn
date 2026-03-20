@@ -27,20 +27,16 @@ const Notes = () => {
       setNotes(prevNotes => prevNotes.map(n => n.id === updatedNote.id ? updatedNote : n));
     });
 
-    // ✅ ADDED: noteAdded listener
     socket.on("noteAdded", (newNote) => {
       setNotes(prevNotes => [...prevNotes, newNote]);
     });
 
-    // ✅ ADDED: noteDeleted listener
     socket.on("noteDeleted", (deletedId) => {
       setNotes(prevNotes => prevNotes.filter(n => n.id !== deletedId));
     });
 
     return () => {
       socket.off("noteUpdated");
-
-      // ✅ ADDED: cleanup
       socket.off("noteAdded");
       socket.off("noteDeleted");
     };
@@ -55,9 +51,7 @@ const Notes = () => {
         setMessage("Note added ✅"); 
         fetchNotes(); 
 
-        // ✅ ADDED: emit event
         socket.emit("noteAdded", { id: res.data.noteId, title, content });
-
       })
       .catch(() => setMessage("Error adding note ❌"));
   };
@@ -72,9 +66,7 @@ const Notes = () => {
         setMessage("Note updated ✅"); 
         fetchNotes(); 
 
-        // ✅ ADDED: emit event
         socket.emit("noteUpdated", { id: editId, title, content });
-
       })
       .catch(() => setMessage("Error updating note ❌"));
   };
@@ -85,9 +77,7 @@ const Notes = () => {
         setMessage("Note deleted ✅"); 
         fetchNotes(); 
 
-        // ✅ ADDED: emit event
         socket.emit("noteDeleted", id);
-
       })
       .catch(() => setMessage("Error deleting note ❌"));
   };
@@ -101,24 +91,38 @@ const Notes = () => {
 
   return (
     <div style={{ maxWidth: "600px", margin: "20px auto", padding: "10px", border: "1px solid #ccc", borderRadius: "8px" }}>
+      
       <h2>Notes</h2>
+
+      {/* ✅ Logout Button ADDED */}
+      <button onClick={() => {
+        localStorage.removeItem("token");
+        window.location.reload();
+      }} style={{ marginBottom: "10px" }}>
+        Logout
+      </button>
+
       {message && <p style={{ color: "green", fontWeight: "bold" }}>{message}</p>}
+
       <input 
         placeholder="Title" 
         value={title} 
         onChange={e => setTitle(e.target.value)} 
         style={{ width: "100%", padding: "8px", marginBottom: "8px" }} 
       />
+
       <textarea 
         placeholder="Content" 
         value={content} 
         onChange={e => setContent(e.target.value)} 
         style={{ width: "100%", padding: "8px", marginBottom: "8px" }} 
       />
+
       {editId ? 
         <button onClick={updateNote} style={{ marginRight: "8px" }}>Update Note</button> : 
         <button onClick={createNote} style={{ marginRight: "8px" }}>Add Note</button>
       }
+
       <ul style={{ listStyle: "none", padding: 0 }}>
         {notes.map(note => (
           <li key={note.id} style={{ border: "1px solid #ddd", padding: "10px", marginBottom: "8px", borderRadius: "4px" }}>
@@ -129,6 +133,7 @@ const Notes = () => {
           </li>
         ))}
       </ul>
+
     </div>
   );
 };
