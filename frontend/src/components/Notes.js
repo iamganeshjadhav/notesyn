@@ -11,8 +11,12 @@ const Notes = () => {
   const [editId, setEditId] = useState(null);
   const [message, setMessage] = useState("");
 
+  // ✅ Search state
+  const [search, setSearch] = useState("");
+
   const API_URL = process.env.REACT_APP_API_URL;
 
+  // ✅ Fetch Notes
   const fetchNotes = () => {
     setMessage("Loading notes...");
     axios.get(`${API_URL}/notes`, {
@@ -20,15 +24,21 @@ const Notes = () => {
         Authorization: localStorage.getItem("token")
       }
     })
-      .then(res => { setNotes(res.data); setMessage(""); })
+      .then(res => {
+        setNotes(res.data);
+        setMessage("");
+      })
       .catch(() => setMessage("Error fetching notes"));
   };
 
+  // ✅ Socket + Initial Load
   useEffect(() => { 
     fetchNotes();  
 
     socket.on("noteUpdated", (updatedNote) => {
-      setNotes(prevNotes => prevNotes.map(n => n.id === updatedNote.id ? updatedNote : n));
+      setNotes(prevNotes =>
+        prevNotes.map(n => n.id === updatedNote.id ? updatedNote : n)
+      );
     });
 
     socket.on("noteAdded", (newNote) => {
@@ -36,7 +46,9 @@ const Notes = () => {
     });
 
     socket.on("noteDeleted", (deletedId) => {
-      setNotes(prevNotes => prevNotes.filter(n => n.id !== deletedId));
+      setNotes(prevNotes =>
+        prevNotes.filter(n => n.id !== deletedId)
+      );
     });
 
     return () => {
@@ -46,8 +58,19 @@ const Notes = () => {
     };
   }, []);
 
+  // ✅ FIXED Search Logic (IMPORTANT)
+  const filteredNotes = notes.filter(note =>
+    (note.title || "").toLowerCase().includes(search.toLowerCase()) ||
+    (note.content || "").toLowerCase().includes(search.toLowerCase())
+  );
+
+  // ✅ Create Note
   const createNote = () => {
-    if (!title.trim()) { setMessage("Title required!"); return; }
+    if (!title.trim()) {
+      setMessage("Title required!");
+      return;
+    }
+
     axios.post(`${API_URL}/notes`, 
       { title, content, owner_id: 1 },
       {
@@ -62,13 +85,22 @@ const Notes = () => {
         setMessage("Note added ✅"); 
         fetchNotes(); 
 
-        socket.emit("noteAdded", { id: res.data.noteId, title, content });
+        socket.emit("noteAdded", {
+          id: res.data.noteId,
+          title,
+          content
+        });
       })
       .catch(() => setMessage("Error adding note ❌"));
   };
 
+  // ✅ Update Note
   const updateNote = () => {
-    if (!title.trim()) { setMessage("Title required!"); return; }
+    if (!title.trim()) {
+      setMessage("Title required!");
+      return;
+    }
+
     axios.put(`${API_URL}/notes/${editId}`, 
       { title, content },
       {
@@ -84,11 +116,16 @@ const Notes = () => {
         setMessage("Note updated ✅"); 
         fetchNotes(); 
 
-        socket.emit("noteUpdated", { id: editId, title, content });
+        socket.emit("noteUpdated", {
+          id: editId,
+          title,
+          content
+        });
       })
       .catch(() => setMessage("Error updating note ❌"));
   };
 
+  // ✅ Delete Note
   const deleteNote = (id) => {
     axios.delete(`${API_URL}/notes/${id}`, {
       headers: {
@@ -104,6 +141,7 @@ const Notes = () => {
       .catch(() => setMessage("Error deleting note ❌"));
   };
 
+  // ✅ Edit Note
   const editNote = (note) => { 
     setEditId(note.id); 
     setTitle(note.title); 
@@ -124,39 +162,76 @@ const Notes = () => {
       
       <h2 style={{ textAlign: "center" }}>📝 Notes</h2>
 
-      {/* Logout Button */}
-      <button onClick={() => {
-        localStorage.removeItem("token");
-        window.location.reload();
-      }} style={{
-        marginBottom: "15px",
-        padding: "8px 12px",
-        backgroundColor: "#dc3545",
-        color: "white",
-        border: "none",
-        borderRadius: "5px",
-        cursor: "pointer"
-      }}>
+      {/* Logout */}
+      <button
+        onClick={() => {
+          localStorage.removeItem("token");
+          window.location.reload();
+        }}
+        style={{
+          marginBottom: "15px",
+          padding: "8px 12px",
+          backgroundColor: "#dc3545",
+          color: "white",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer"
+        }}
+      >
         Logout
       </button>
 
-      {message && <p style={{ color: "green", fontWeight: "bold" }}>{message}</p>}
+      {/* Message */}
+      {message && (
+        <p style={{ color: "green", fontWeight: "bold" }}>
+          {message}
+        </p>
+      )}
 
+      {/* Search */}
+      <input 
+        placeholder="Search notes..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        style={{
+          width: "90%",
+          padding: "10px",
+          marginBottom: "15px",
+          borderRadius: "5px",
+          border: "1px solid #ccc"
+        }}
+      />
+
+      {/* Title */}
       <input 
         placeholder="Title" 
         value={title} 
         onChange={e => setTitle(e.target.value)} 
-        style={{ width: "90%", padding: "10px", marginBottom: "10px", borderRadius: "5px", border: "1px solid #ccc" }} 
+        style={{
+          width: "90%",
+          padding: "10px",
+          marginBottom: "10px",
+          borderRadius: "5px",
+          border: "1px solid #ccc"
+        }}
       />
 
+      {/* Content */}
       <textarea 
         placeholder="Content" 
         value={content} 
         onChange={e => setContent(e.target.value)} 
-        style={{ width: "90%", padding: "10px", marginBottom: "10px", borderRadius: "5px", border: "1px solid #ccc" }} 
+        style={{
+          width: "90%",
+          padding: "10px",
+          marginBottom: "10px",
+          borderRadius: "5px",
+          border: "1px solid #ccc"
+        }}
       />
 
-      {editId ? 
+      {/* Buttons */}
+      {editId ? (
         <button onClick={updateNote} style={{
           padding: "10px 15px",
           backgroundColor: "#ffc107",
@@ -166,7 +241,8 @@ const Notes = () => {
           marginRight: "10px"
         }}>
           Update Note
-        </button> : 
+        </button>
+      ) : (
         <button onClick={createNote} style={{
           padding: "10px 15px",
           backgroundColor: "#28a745",
@@ -178,10 +254,15 @@ const Notes = () => {
         }}>
           Add Note
         </button>
-      }
+      )}
 
-      <ul style={{ listStyle: "none", padding: 0, marginTop: "20px" }}>
-        {notes.map(note => (
+      {/* Notes List */}
+      <ul style={{
+        listStyle: "none",
+        padding: 0,
+        marginTop: "20px"
+      }}>
+        {filteredNotes.map(note => (
           <li key={note.id} style={{
             border: "1px solid #ddd",
             padding: "15px",
