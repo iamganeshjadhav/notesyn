@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Notes from "./components/Notes";
 import Auth from "./components/Auth";
+import ActivityLog from "./components/ActivityLog";
 
 function App() {
   const [time, setTime] = useState("");
@@ -47,8 +48,12 @@ function App() {
       </div>
 
       {/* Main Content */}
-      {isLoggedIn ? <Notes /> : <Auth />}
-
+      {isLoggedIn ? (
+        <>
+          <Notes />
+          <ActivityLog /> 
+        </>
+      ) :(<Auth/>)}
     </div>
   );
 }
